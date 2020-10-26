@@ -25,8 +25,8 @@ class FileUploadServicer(fileupload_pb2_grpc.FileUploadServicer):
 
     def saveFile(self, image, count):
         filename = "Image - {}.jpg".format(str(count))
-
-        file_path = self.serverImagePath + filename
+        DATE_FOLDER = datetime.today().strftime("%Y-%M-%d") + "/"
+        file_path = self.serverImagePath + DATE_FOLDER + filename
 
         f = open(file_path, "w")
         if len(image) > 0:
