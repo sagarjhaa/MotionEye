@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+message IncomingFile{
+  string message = 1;
+}
+
+message ReturnValue{
+  string message = 1;
+}
+
+
+service FileUpload{
+
+  rpc UploadFile(IncomingFile) returns (ReturnValue) {}
+
+}
