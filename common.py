@@ -1,6 +1,8 @@
 import json
+import os
 
-CONFIG_FILE = "./config.json"
+__location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
+CONFIG_FILE = os.path.join(__location__, "config.json")
 
 
 def loadConfiguration(config_path=CONFIG_FILE):

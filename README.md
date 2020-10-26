@@ -59,5 +59,5 @@ sudo reboot
 ### Check status of service
 
 ```
-systemctl status fileUpload.service
+sudo systemctl status fileUpload.service
 ```

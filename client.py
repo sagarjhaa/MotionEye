@@ -35,7 +35,7 @@ def keepChecking(stub):
     while True:
         try:
 
-            DATE_FOLDER = datetime.today().strftime("%Y-%M-%d") + "/"
+            DATE_FOLDER = datetime.today().strftime("%Y-%m-%d") + "/"
 
             onlyfiles = [
                 f

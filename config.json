@@ -1,5 +1,5 @@
 {
-  "images_path": "/home/pi/Desktop/grpcTest/photos/",
+  "images_path": "/home/pi/Desktop/MotionEye/photos/",
   "server_ip": "",
   "grpc_port": "2000",
   "frequency_sleep_sec": 10,
