@@ -5,6 +5,7 @@ from concurrent import futures
 import base64
 import logging
 from datetime import datetime
+import os
 from common import loadConfiguration
 
 
@@ -24,15 +25,17 @@ class FileUploadServicer(fileupload_pb2_grpc.FileUploadServicer):
             return fileupload_pb2.ReturnValue(message="Image not processed")
 
     def saveFile(self, image, count):
-        filename = "Image - {}.jpg".format(str(count))
-        DATE_FOLDER = datetime.today().strftime("%Y-%M-%d") + "/"
-        file_path = self.serverImagePath + DATE_FOLDER + filename
+        filename = "Image-{}.jpg".format(str(count))
+        DATE_FOLDER = datetime.today().strftime("%Y-%m-%d") + "/"
+        file_path = "./" + self.serverImagePath + DATE_FOLDER
+        if not os.path.isdir(file_path):
+            os.makedirs(file_path)
 
-        f = open(file_path, "w")
-        if len(image) > 0:
+        file_path = file_path + filename
+
+        with open(str(file_path), "w") as f:
             f.write(image.decode("base64"))
             logging.info("{} - written".format(filename))
-        f.close()
 
 
 def main():
