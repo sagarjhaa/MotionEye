@@ -7,11 +7,10 @@ import os
 from os import listdir
 from os.path import isfile, join
 import logging
-
-PATH = "/home/pi/Desktop/grpcTest/photos/"
-DATE_FOLDER = "2020-10-25/"
-
+import json
+from datetime import datetime
 import base64
+from common import loadConfiguration
 
 
 def processImage(path):
@@ -26,34 +25,49 @@ def uploadFile(message, stub):
         return response.message
     except Exception as e:
         logging.error(e)
+        logging.info("Waiting for 10 seconds for server to startup")
         time.sleep(10)
 
 
 def keepChecking(stub):
+    config = loadConfiguration()
+    PATH = config["images_path"]
     while True:
-        onlyfiles = [
-            f
-            for f in listdir(PATH + DATE_FOLDER)
-            if isfile(join(PATH + DATE_FOLDER, f))
-        ]
+        try:
 
-        if len(onlyfiles) > 0:
-            for file in onlyfiles:
-                file_path = "{}{}{}".format(PATH, DATE_FOLDER, file)
+            DATE_FOLDER = datetime.today().strftime("%Y-%M-%d") + "/"
 
-                imageString = processImage(file_path)
+            onlyfiles = [
+                f
+                for f in listdir(PATH + DATE_FOLDER)
+                if isfile(join(PATH + DATE_FOLDER, f))
+            ]
 
-                response = uploadFile(message=imageString, stub=stub)
+            if len(onlyfiles) > 0:
+                for file in onlyfiles:
+                    file_path = "{}{}{}".format(PATH, DATE_FOLDER, file)
 
-                logging.info("Processed file " + file + " " + str(response))
+                    imageString = processImage(file_path)
 
-                os.remove(file_path)
+                    response = uploadFile(message=imageString, stub=stub)
 
-            time.sleep(10)
+                    logging.info("Processed file " + file + " " + str(response))
+
+                    os.remove(file_path)
+
+                time.sleep(config["frequency_sleep_sec"])
+
+        except Exception as e:
+            logging.error(e)
 
 
 def main():
-    channel = grpc.insecure_channel("192.168.0.8:2000")
+    config = loadConfiguration()
+
+    server_addr = config["server_ip"]
+    grpc_port = config["grpc_port"]
+
+    channel = grpc.insecure_channel(server_addr + ":" + grpc_port)
     stub = fileupload_pb2_grpc.FileUploadStub(channel=channel)
     keepChecking(stub)
 
@@ -61,7 +75,7 @@ def main():
 if __name__ == "__main__":
     FORMAT = "%(asctime)-15s %(message)s"
     logging.basicConfig(
-        format=FORMAT, filename="fileupload.log", encoding="utf-8", level=logging.DEBUG
+        format=FORMAT, filename="client.log", encoding="utf-8", level=logging.DEBUG
     )
-    logging.info("Starting the client")
+    logging.info("\n Starting the client")
     main()

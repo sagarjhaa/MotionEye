@@ -1,0 +1,7 @@
+{
+  "images_path": "/home/pi/Desktop/grpcTest/photos/",
+  "server_ip": "",
+  "grpc_port": "2000",
+  "frequency_sleep_sec": 10,
+  "server_images_path": "/images/"
+}
